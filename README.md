@@ -20,7 +20,9 @@ Wissensbasis alles automatisch.
    Zugriffstoken* → Scopes `repository` (Read/Write) und `issue` (Read/Write) →
    Token kopieren.
 2. **Geheimnisse auf Benutzer-Ebene** (Avatar → *Einstellungen → Actions →
-   Geheimnisse*):
+   Geheimnisse*). **Wichtig: wirklich die Benutzer-Ebene über dein Avatar-Menü,
+   NICHT die Repo-Einstellungen** — nur dann erbt jede neue Wissensbasis die
+   Geheimnisse automatisch. Auf Repo-Ebene müsstest du sie pro KB neu setzen.
    - `FOJO_TOKEN` = dein gerade erstellter Token
      *(der Name darf nicht mit `FORGEJO_` beginnen — das ist reserviert)*
    - `BASE_URL` = z. B. `https://openrouter.ai/api/v1`
