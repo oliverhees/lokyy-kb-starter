@@ -1,0 +1,36 @@
+# Der Tagesimpuls (B3b) — Vorlage für .forgejo/workflows/morgen-meldung.yml.
+# Läuft morgens NACH dem Nachtlauf, fragt offene/übernommene Bibliothekar-PRs ab
+# und schickt EINE kurze Meldung. Kein Modell, kein API_KEY — nur:
+#   FOJO_TOKEN     Zugriffstoken (Lesen genügt; dasselbe Secret wie der Nachtlauf)
+#   MELDE_WEBHOOK  (optional) Webhook-URL für die Push-Meldung. Empfehlung:
+#                  ein ntfy.sh-Topic (https://ntfy.sh/dein-geheimes-topic) —
+#                  kostenlos, ohne Konto, Push direkt aufs Handy. Ohne Webhook
+#                  landet die Meldung nur im Action-Log.
+#   MELDE_KANAL    (optional) "ntfy" (Default) oder "json" (Slack/Discord/Relay)
+name: Tagesimpuls (Morgenmeldung)
+on:
+  schedule:
+    - cron: "0 6 * * *"    # 06:00 UTC ~ 07:00/08:00 Europe/Berlin (nach dem Nachtlauf um 02:00)
+  workflow_dispatch: {}
+jobs:
+  meldung:
+    runs-on: docker
+    container:
+      image: node:20-bookworm
+    steps:
+      - name: Werkzeuge bereitstellen (bun + lokyy-mcp)
+        run: |
+          apt-get update -qq && apt-get install -y -qq unzip git >/dev/null
+          curl -fsSL https://bun.sh/install | bash
+          echo "$HOME/.bun/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.bun/bin:$PATH"
+          git clone --depth 1 https://github.com/oliverhees/lokyy-mcp.git /tmp/lokyy-mcp
+          cd /tmp/lokyy-mcp && bun install --production
+      - name: Meldung erzeugen
+        env:
+          FORGEJO_URL: ${{ github.server_url }}
+          FORGEJO_REPO: ${{ github.repository }}
+          FORGEJO_TOKEN: ${{ secrets.FOJO_TOKEN }}
+          MELDE_WEBHOOK: ${{ secrets.MELDE_WEBHOOK }}
+          MELDE_KANAL: ntfy
+        run: bun /tmp/lokyy-mcp/aktionen/MorgenMeldung.ts

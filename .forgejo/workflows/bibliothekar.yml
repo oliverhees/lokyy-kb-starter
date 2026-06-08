@@ -1,0 +1,50 @@
+# Der nächtliche Bibliothekar (B2) — Vorlage für .forgejo/workflows/bibliothekar.yml
+# in der Wissensbasis-Repo des Teilnehmers.
+#
+# Vorausgesetzt:
+#  - Ein Forgejo-Actions-Runner mit Label "docker" ist online (siehe lokyy-runner).
+#  - Repo-Secrets gesetzt (Einstellungen -> Actions -> Geheimnisse):
+#      BASE_URL       z. B. https://openrouter.ai/api/v1
+#      API_KEY        der Modell-Key (z. B. OpenRouter) — PII-Guardrail im Konto aus!
+#      MODELL         z. B. openrouter/auto  (Modellwechsel = nur diese Variable)
+#      FOJO_TOKEN     ein Zugriffstoken (Einstellungen -> Anwendungen -> Token
+#                     generieren) mit Scope "write:repository" — der automatische
+#                     Actions-Token darf auf PRIVATEN Repos keine PRs anlegen.
+#                     (Name OHNE "FORGEJO"-Prefix, der ist in Secrets reserviert.)
+name: Bibliothekar (Nachtlauf)
+on:
+  schedule:
+    - cron: "0 2 * * *"    # 02:00 UTC ~ 03:00/04:00 Europe/Berlin (Forgejo rechnet in UTC)
+  workflow_dispatch: {}     # manueller Probelauf im Actions-Tab
+jobs:
+  nachtlauf:
+    runs-on: docker
+    container:
+      image: node:20-bookworm
+    steps:
+      - name: Wissensbasis holen
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Werkzeuge bereitstellen (bun + lokyy-mcp)
+        run: |
+          apt-get update -qq && apt-get install -y -qq unzip git >/dev/null
+          curl -fsSL https://bun.sh/install | bash
+          echo "$HOME/.bun/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.bun/bin:$PATH"
+          git clone --depth 1 https://github.com/oliverhees/lokyy-mcp.git /tmp/lokyy-mcp
+          cd /tmp/lokyy-mcp && bun install --production
+      - name: Nachtlauf
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+          MODELL: ${{ secrets.MODELL }}
+          REPO_PFAD: ${{ github.workspace }}
+          FORGEJO_URL: ${{ github.server_url }}
+          FORGEJO_REPO: ${{ github.repository }}
+          FORGEJO_TOKEN: ${{ secrets.FOJO_TOKEN }}
+          # "auto" (Default): sauberer Lauf wird selbst zusammengeführt; nur bei
+          # einer Entscheidungsfrage bleibt der PR offen (der Tagesimpuls meldet
+          # ihn morgens). "manuell" = nie auto-mergen (jeder PR wartet auf dich).
+          MERGE_MODUS: auto
+        run: bun /tmp/lokyy-mcp/aktionen/Bibliothekar.ts

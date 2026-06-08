@@ -1,0 +1,39 @@
+# Der Veredler (B3c) — Vorlage für .forgejo/workflows/veredler.yml.
+# Läuft NACH dem Bibliothekar und vernetzt die Wiki-Artikel (Querverweise + Tags),
+# ohne je Inhalte umzuschreiben. Gleiche Secrets wie der Nachtlauf:
+#   BASE_URL / API_KEY / MODELL  (Modell-Endpoint)
+#   FOJO_TOKEN                   (Zugriffstoken, Scope write:repository)
+name: Veredler (Vernetzung)
+on:
+  schedule:
+    - cron: "30 2 * * *"   # 02:30 UTC — kurz nach dem Bibliothekar (02:00)
+  workflow_dispatch: {}
+jobs:
+  vernetzung:
+    runs-on: docker
+    container:
+      image: node:20-bookworm
+    steps:
+      - name: Wissensbasis holen
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Werkzeuge bereitstellen (bun + lokyy-mcp)
+        run: |
+          apt-get update -qq && apt-get install -y -qq unzip git >/dev/null
+          curl -fsSL https://bun.sh/install | bash
+          echo "$HOME/.bun/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.bun/bin:$PATH"
+          git clone --depth 1 https://github.com/oliverhees/lokyy-mcp.git /tmp/lokyy-mcp
+          cd /tmp/lokyy-mcp && bun install --production
+      - name: Vernetzung
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          API_KEY: ${{ secrets.API_KEY }}
+          MODELL: ${{ secrets.MODELL }}
+          REPO_PFAD: ${{ github.workspace }}
+          FORGEJO_URL: ${{ github.server_url }}
+          FORGEJO_REPO: ${{ github.repository }}
+          FORGEJO_TOKEN: ${{ secrets.FOJO_TOKEN }}
+          MERGE_MODUS: auto
+        run: bun /tmp/lokyy-mcp/aktionen/Veredler.ts
