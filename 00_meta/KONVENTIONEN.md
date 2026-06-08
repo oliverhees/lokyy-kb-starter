@@ -49,6 +49,24 @@ Quellen: <RAW-Dateiname>, <RAW-Dateiname>   ← Klartext, keine [[Verweise]]
 Tags: <wort>, <wort>                          ← optional, einzelne Wörter
 ```
 
+**Persönliche Notiz** (`RAW/_notizen/`, eigenes leichtes Frontmatter — wird vom
+Befehl „neue Notiz" angelegt):
+
+```yaml
+---
+title: <Titel der Notiz>
+date_added: JJJJ-MM-TT
+type: note
+tags: <wort>, <wort>   ← optional
+---
+```
+
+Notizen liegen in der „Hände weg"-Zone: durchsuchbar, aber **nie destilliert,
+nie geprüft und nicht im Wiki-INDEX**. Sie sind dein persönliches Fach — das
+feste Schema oben sorgt dafür, dass sie auffindbar bleiben statt im Wildwuchs zu
+verschwinden. Soll eine Notiz fertiges, vernetztes Wissen werden, mach daraus
+einen Wiki-Artikel (`artikel_schreiben`).
+
 ## Verweise
 
 - `[[Slug]]` gibt es **nur** zwischen Wiki-Artikeln, zeichengenau auf existierende
