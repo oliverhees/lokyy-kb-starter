@@ -49,23 +49,16 @@ Quellen: <RAW-Dateiname>, <RAW-Dateiname>   ← Klartext, keine [[Verweise]]
 Tags: <wort>, <wort>                          ← optional, einzelne Wörter
 ```
 
-**Persönliche Notiz** (`RAW/_notizen/`, eigenes leichtes Frontmatter — wird vom
-Befehl „neue Notiz" angelegt):
+**Persönliche Notiz** — der Befehl „neue Notiz" legt einen **Wiki-Eintrag** mit
+`Status: These` an (unbelegt, weil es deine eigene Notiz ist). Du gibst nur Titel
++ Inhalt (+ Tags); der Server füllt das kanonische Wiki-Format. So ist die Notiz
+**durchsucht, vom Veredler vernetzt und im INDEX** — sie geht nicht unter, wird
+aber nie destilliert. Ergänzt du später eine Quelle, reift sie zu „im
+Aufbau"/„gesichert".
 
-```yaml
----
-title: <Titel der Notiz>
-date_added: JJJJ-MM-TT
-type: note
-tags: <wort>, <wort>   ← optional
----
-```
-
-Notizen liegen in der „Hände weg"-Zone: durchsuchbar, aber **nie destilliert,
-nie geprüft und nicht im Wiki-INDEX**. Sie sind dein persönliches Fach — das
-feste Schema oben sorgt dafür, dass sie auffindbar bleiben statt im Wildwuchs zu
-verschwinden. Soll eine Notiz fertiges, vernetztes Wissen werden, mach daraus
-einen Wiki-Artikel (`artikel_schreiben`).
+Davon zu unterscheiden: rohes, persönliches Wegwerf-Material kannst du direkt in
+`RAW/_notizen/` ablegen — das ist die „Hände weg"-Zone: durchsuchbar, aber bewusst
+nie destilliert, nie geprüft und nicht vernetzt.
 
 ## Verweise
 

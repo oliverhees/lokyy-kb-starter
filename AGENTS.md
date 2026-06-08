@@ -42,7 +42,7 @@ und der verweist zurück auf seine Quelle in RAW.
 | **„save this session"** | Kernerkenntnisse dieses Chats sichern → `RAW/sessions/` |
 | **„what do I know about ___"** | Frage ans Wiki, Antwort mit Quellen |
 | **„save that"** | eine gute Antwort als neuen Wiki-Artikel sichern |
-| **„neue Notiz"** | strukturierte persönliche Notiz in `RAW/_notizen/` (durchsuchbar, nie destilliert) |
+| **„neue Notiz"** | persönliche Notiz als Wiki-Eintrag (Status These) — durchsucht, vernetzt, im Index, nie destilliert |
 
 ## Regeln (vom Server erzwungen, hier zur Erinnerung)
 
